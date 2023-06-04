@@ -9,6 +9,9 @@ Run the following command to install all Python dependencies:
 ```
 $ pip install -e .
 $ pip install -r requirements.txt
+$ sudo apt install patchelf
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/egl670086/.mujoco/mujoco210/bin 
+$ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia 
 ```
 
 Other dependencies:
