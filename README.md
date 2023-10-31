@@ -12,6 +12,7 @@ $ pip install -r requirements.txt
 $ sudo apt install patchelf
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/egl670086/.mujoco/mujoco210/bin 
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia 
+$ pip install "cython<3"
 ```
 
 Other dependencies:
@@ -21,6 +22,10 @@ Other dependencies:
 - cuDNN=8.0
 
 - Experts/reward functions are provided on [Google Drive](https://drive.google.com/file/d/1Hq5Iu8oMvA9bx_fvrUmburtevjLFhKit/view?usp=sharing)
+
+- Install MuJoCo (https://github.com/openai/mujoco-py#install-mujoco)
+    - Download MuJoCo
+    - Make .mujoco, and copy mujoco210/ and past .mujoco/
 
 ## Run Experiments
 

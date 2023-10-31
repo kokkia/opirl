@@ -2,12 +2,12 @@ gym==0.25.0
 imageio-ffmpeg
 joblib
 matplotlib
-mujoco_py=2.1.2.14
-numpy
+mujoco_py==2.1.2.14
+numpy==1.22.0
 tensorflow==2.4.0
 tensorflow_probability==0.12.2
 tf-agents==0.8.0
 wandb
-setuptools=59.5.0
+setuptools==59.5.0
 mujoco==2.3.5
 
