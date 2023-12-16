@@ -10,9 +10,11 @@ Run the following command to install all Python dependencies:
 $ pip install -e .
 $ pip install -r requirements.txt
 $ sudo apt install patchelf
+$ sudo apt install cuda-cudart-11-8 
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/egl670086/.mujoco/mujoco210/bin 
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia 
 $ pip install "cython<3"
+$ sudo apt-get install libosmesa6-dev
 ```
 
 Other dependencies:
