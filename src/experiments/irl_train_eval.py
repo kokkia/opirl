@@ -99,6 +99,14 @@ class IRLTrainer(BaseTrainer):
         self.video_recorder = VideoRecorder(
             self._output_dir if self._save_test_movie else None)
 
+        # tenorboard
+        self.airl_log_dir = 'logs/airl'
+        self.airl_writer = tf.summary.create_file_writer(self.airl_log_dir)
+        self.policy_log_dir = 'logs/policy'
+        self.policy_writer = tf.summary.create_file_writer(self.policy_log_dir)
+        self.total_steps = 0
+        self.reward_log = 0
+
     def __call__(self):
         episode_return = 0
         episode_timesteps = 0
@@ -152,6 +160,7 @@ class IRLTrainer(BaseTrainer):
                           np.random.normal(0, 0.1, size=action.shape)).clip(
                               -1, 1)
             next_obs, reward, done, diagnostics = self.env.step(action)
+            self.reward_log = reward
 
             # done caused by episode truncation.
             truncated_done = done and episode_timesteps + 1 == self.env._max_episode_steps
@@ -186,6 +195,7 @@ class IRLTrainer(BaseTrainer):
             obs = next_obs
 
             if total_timesteps >= self._start_training_timesteps:
+                self.total_steps = total_timesteps
                 for _ in range(self._updates_per_step):
                     self._train_imitator()
                     self._train_policy()
@@ -228,6 +238,10 @@ class IRLTrainer(BaseTrainer):
                 **self._get_imitator_train_kwargs())
 
             self.logger.log('train/disc_loss', return_dict['train/gail_loss'])
+        with self.airl_writer.as_default():
+            tf.summary.scalar('gail_classification_loss', return_dict['train/gail_classification_loss'], self.total_steps)
+            tf.summary.scalar('gail_gradient_penalty', return_dict['train/gail_gradient_penalty'], self.total_steps)
+            tf.summary.scalar('gail_loss', return_dict['train/gail_loss'], self.total_steps)
 
     def _train_policy(self):
         for _ in range(self._policy_updates_per_step):
@@ -242,6 +256,16 @@ class IRLTrainer(BaseTrainer):
                 return_dict['train/imitator_reward'] = np.mean(
                     kwargs['rewards'])
             self._log_to_logger(return_dict)
+
+        with self.policy_writer.as_default():
+            tf.summary.scalar('env_reward', self.reward_log, self.total_steps)
+            tf.summary.scalar('critic_loss', return_dict['train/critic_loss'], self.total_steps)
+            tf.summary.scalar('actor_loss', return_dict['train/actor_loss'], self.total_steps)
+            tf.summary.scalar('bc_loss', return_dict['train/bc_loss'], self.total_steps)
+            tf.summary.scalar('alpha_loss', return_dict['train/alpha_loss'], self.total_steps)
+            tf.summary.scalar('actor_entropy', return_dict['train/actor_entropy'], self.total_steps)
+            tf.summary.scalar('alpha', return_dict['train/alpha'], self.total_steps)
+            tf.summary.scalar('imitation_reward', return_dict['train/imitation_reward'], self.total_steps)
 
     def _log_to_logger(self, return_dict):
         for k, v in return_dict.items():

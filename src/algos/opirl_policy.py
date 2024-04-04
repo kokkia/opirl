@@ -15,7 +15,6 @@ ds = tfp.distributions
 LOG_STD_MIN = -5
 LOG_STD_MAX = 2
 
-
 def soft_update(net, target_net, tau=0.005):
     for var, target_var in zip(net.variables, target_net.variables):
         new_value = var * tau + target_var * (1 - tau)
@@ -171,7 +170,7 @@ class Policy(OffPolicyAgent):
         self.critic_optimizer.apply_gradients(zip(critic_grads, self.critic.variables))
 
         return critic_loss
-
+    
     def fit_actor(self, states, actions, next_states, rewards, masks, target_entropy, init_states):
         with tf.GradientTape(watch_accessed_variables=False) as tape:
             tape.watch(self.actor.variables)
@@ -234,14 +233,14 @@ class Policy(OffPolicyAgent):
     @tf.function
     def train(self, states, actions, next_states, rewards, masks, init_states, target_entropy=0, actor_update_freq=2):
         critic_loss = self.fit_critic(states, actions, next_states, rewards, masks, init_states)
-        return_dict = {
-            "train/critic_loss": critic_loss,
-            "train/actor_loss": self.avg_actor_loss.result(),
-            "train/bc_loss": self.avg_bc_loss.result(),
-            "train/alpha_loss": self.avg_alpha_loss.result(),
-            "train/actor_entropy": self.avg_actor_entropy.result(),
-            "train/alpha": self.alpha,
-        }
+        # return_dict = {
+        #     "train/critic_loss": critic_loss,
+        #     "train/actor_loss": self.avg_actor_loss.result(),
+        #     "train/bc_loss": self.avg_bc_loss.result(),
+        #     "train/alpha_loss": self.avg_alpha_loss.result(),
+        #     "train/actor_entropy": self.avg_actor_entropy.result(),
+        #     "train/alpha": self.alpha,
+        # }
 
         if tf.equal(self.critic_optimizer.iterations % actor_update_freq, 0):
             actor_loss, alpha_loss, entropy, bc_loss = self.fit_actor(
@@ -255,15 +254,32 @@ class Policy(OffPolicyAgent):
             self.avg_actor_entropy(entropy)
             self.avg_alpha(self.alpha)
 
+            return_dict = {
+                "train/critic_loss": critic_loss,
+                "train/actor_loss": self.avg_actor_loss.result(),
+                "train/bc_loss": self.avg_bc_loss.result(),
+                "train/alpha_loss": self.avg_alpha_loss.result(),
+                "train/actor_entropy": self.avg_actor_entropy.result(),
+                "train/alpha": self.alpha,
+            }
             # return_dict['train/actor_loss'] = self.avg_actor_loss.result()
             # return_dict['train/alpha_loss'] = self.avg_alpha_loss.result()
-            # return_dict['train/actor_entropy'] = self.avg_actor_entropy.result(
-            # )
+            # return_dict['train/actor_entropy'] = self.avg_actor_entropy.result()
             # return_dict["train/bc_loss"] = self.avg_bc_loss.result()
             keras_utils.my_reset_states(self.avg_actor_loss)
             keras_utils.my_reset_states(self.avg_bc_loss)
             keras_utils.my_reset_states(self.avg_alpha_loss)
             keras_utils.my_reset_states(self.avg_actor_entropy)
             keras_utils.my_reset_states(self.avg_alpha)
+        else:
+            return_dict = {
+                "train/critic_loss": critic_loss,
+                "train/actor_loss": self.avg_actor_loss.result(),
+                "train/bc_loss": self.avg_bc_loss.result(),
+                "train/alpha_loss": self.avg_alpha_loss.result(),
+                "train/actor_entropy": self.avg_actor_entropy.result(),
+                "train/alpha": self.alpha,
+            }
+            
 
         return return_dict
