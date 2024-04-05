@@ -265,7 +265,7 @@ class IRLTrainer(BaseTrainer):
             tf.summary.scalar('alpha_loss', return_dict['train/alpha_loss'], self.total_steps)
             tf.summary.scalar('actor_entropy', return_dict['train/actor_entropy'], self.total_steps)
             tf.summary.scalar('alpha', return_dict['train/alpha'], self.total_steps)
-            tf.summary.scalar('imitation_reward', return_dict['train/imitation_reward'], self.total_steps)
+            tf.summary.scalar('imitation_reward', return_dict['train/imitator_reward'], self.total_steps)
 
     def _log_to_logger(self, return_dict):
         for k, v in return_dict.items():
