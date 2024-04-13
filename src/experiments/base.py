@@ -27,6 +27,7 @@ class BaseTrainer:
 
         # Save
         self._save_model = args.save_model
+        self._save_model = True
         self._save_model_interval = args.save_model_interval
         self._load_model_dir = args.load_model_dir
         self._save_test_movie = args.save_test_movie
@@ -34,15 +35,12 @@ class BaseTrainer:
         # List of indices for saving videos
         n_test = int(args.max_timesteps / args.eval_interval)
         # List of index of testing
-        eval_interval_indices = [
-            args.eval_interval * i for i in range(n_test + 1) if i > 0
-        ]
+        eval_interval_indices = [args.eval_interval * i for i in range(n_test + 1) if i > 0]
         if len(eval_interval_indices) < args.save_n_movies:
             self._save_movie_indices = eval_interval_indices
         else:
             # List of index for saving videos. Always save the last video.
-            save_movie_indices = np.array_split(eval_interval_indices,
-                                                args.save_n_movies)
+            save_movie_indices = np.array_split(eval_interval_indices, args.save_n_movies)
             self._save_movie_indices = []
             for idx, indices in enumerate(save_movie_indices):
                 self._save_movie_indices.append(indices[0])
