@@ -51,7 +51,8 @@ class Actor(tf.keras.Model):
                                                                      1)
         std = tf.exp(log_std)
 
-        if self._use_multivariate:
+        # if self._use_multivariate:
+        if True:# 共分散行列が対角行列なので、こちらでも一緒
             dist = tfp.distributions.MultivariateNormalDiag(loc=mu,
                                                             scale_diag=std)
         else:
@@ -65,7 +66,6 @@ class Actor(tf.keras.Model):
                     tfp.bijectors.Shift(shift=mu),
                     tfp.bijectors.ScaleMatvecDiag(scale_diag=std)
                 ]))
-
         return dist, mode
 
     @tf.function

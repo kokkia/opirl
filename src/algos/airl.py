@@ -156,6 +156,10 @@ class AIRLGP(IRLAgent):
                     labels=tf.zeros_like(fake_logpq), logits=fake_logpq)
                 classification_loss = tf.reduce_mean(real_loss) \
                     + tf.reduce_mean(fake_loss)
+                
+                tf.print("real_logq", real_logqs)
+                tf.print("fake_logq", fake_logqs)
+                tf.print("loss", real_loss, fake_loss, classification_loss)
 
                 # Compute gradient penalty
                 with tf.GradientTape(watch_accessed_variables=False) as tape2:

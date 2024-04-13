@@ -141,3 +141,5 @@ cython_debug/
 experts/
 results/
 outputs/
+logs/
+experts.zip
