@@ -143,23 +143,29 @@ class AIRLGP(IRLAgent):
                               fake_values)
 
                 with tape.stop_recording():
-                    real_logqs = actor.get_log_prob(policy_states,
-                                                    policy_actions)
-                    fake_logqs = actor.get_log_prob(expert_states,
+                    # real_logqs = actor.get_log_prob(policy_states,
+                    #                                 policy_actions)
+                    # fake_logqs = actor.get_log_prob(expert_states,
+                    #                                 expert_actions)
+                    real_logqs = actor.get_log_prob(expert_states,
                                                     expert_actions)
+                    fake_logqs = actor.get_log_prob(policy_states,
+                                                    policy_actions)
 
-                real_logpq = tf.concat([real_logps, real_logqs], axis=1)
+                # real_logpq = tf.concat([real_logps, real_logqs], axis=1)
+                real_logpq = real_logps - real_logqs
                 real_loss = tf.nn.sigmoid_cross_entropy_with_logits(
                     labels=tf.ones_like(real_logpq), logits=real_logpq)
-                fake_logpq = tf.concat([fake_logps, fake_logqs], axis=1)
+                # fake_logpq = tf.concat([fake_logps, fake_logqs], axis=1)
+                fake_logpq = fake_logps - fake_logqs
                 fake_loss = tf.nn.sigmoid_cross_entropy_with_logits(
                     labels=tf.zeros_like(fake_logpq), logits=fake_logpq)
                 classification_loss = tf.reduce_mean(real_loss) \
                     + tf.reduce_mean(fake_loss)
                 
-                tf.print("real_logq", real_logqs)
-                tf.print("fake_logq", fake_logqs)
-                tf.print("loss", real_loss, fake_loss, classification_loss)
+                # tf.print("real_logq", real_logqs)
+                # tf.print("fake_logq", fake_logqs)
+                # tf.print("loss", real_loss, fake_loss, classification_loss)
 
                 # Compute gradient penalty
                 with tf.GradientTape(watch_accessed_variables=False) as tape2:
