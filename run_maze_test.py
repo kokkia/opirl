@@ -86,7 +86,7 @@ if __name__ == "__main__":
         exponent=args.f_exponent,
     )
 
-    model_path = "results/opirl/pointmaze_left/20240408T164530.825138/models/actor_net800000"
+    model_path = "results/opirl/pointmaze_left/20240428T124618.883721/models/actor_net850000"
     policy.actor.load_model(model_path)
 
     max_steps = env._max_episode_steps
