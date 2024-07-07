@@ -15,6 +15,8 @@ $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/egl670086/.mujoco/mujoco210/bin
 $ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia 
 $ pip install "cython<3"
 $ sudo apt-get install libosmesa6-dev
+$ sudo apt-get install libglew-dev
+$ export LD_PRELOAD=/usr/lib/x86_64-linux-gnu/libGLEW.so
 ```
 
 Other dependencies:
